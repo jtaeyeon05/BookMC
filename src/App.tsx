@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
+import {
+  compressToEncodedURIComponent,
+  decompressFromEncodedURIComponent,
+} from "lz-string";
 
 function App() {
   const [value, setValue] = useState("");
@@ -15,7 +19,14 @@ function App() {
     const savedValue = params.get("v");
 
     if (savedValue) {
-      setValue(decodeURIComponent(savedValue));
+      try {
+        const decompressedValue = decompressFromEncodedURIComponent(savedValue);
+        if (decompressedValue != null) {
+          setValue(decompressedValue);
+        }
+      } catch (error) {
+        console.error("데이터 로드 실패:", error);
+      }
     }
   }, []);
 
@@ -23,7 +34,7 @@ function App() {
     const params = new URLSearchParams();
 
     if (value) {
-      params.set("v", encodeURIComponent(value));
+      params.set("v", compressToEncodedURIComponent(value));
       window.history.replaceState(
         {},
         "",
@@ -46,25 +57,25 @@ function App() {
         <link
           rel="apple-touch-icon"
           sizes="180x180"
-          href={`${FaviconIconPath}/apple-touch-icon.png`}
+          href={`${FaviconPath}/apple-touch-icon.png`}
         />
         <link
           rel="icon"
           type="image/png"
           sizes="64x64"
-          href={`${FaviconIconPath}/favicon_64x64.png`}
+          href={`${FaviconPath}/favicon_64x64.png`}
         />
         <link
           rel="icon"
           type="image/png"
           sizes="32x32"
-          href={`${FaviconIconPath}/favicon_32x32.png`}
+          href={`${FaviconPath}/favicon_32x32.png`}
         />
         <link
           rel="icon"
           type="image/png"
           sizes="16x16"
-          href={`${FaviconIconPath}/favicon_16x16.png`}
+          href={`${FaviconPath}/favicon_16x16.png`}
         />
       </Helmet>
 
@@ -72,7 +83,10 @@ function App() {
         <button
           type="button"
           className="px-2 py-1 bg-button-background text-button-content border-2 border-button-outline cursor-pointer"
-          onClick={() => navigator.clipboard.writeText(window.location.href)}
+          onClick={async () => {
+            if (navigator?.clipboard)
+              navigator.clipboard.writeText(window.location.href);
+          }}
         >
           복사
         </button>
