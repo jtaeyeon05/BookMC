@@ -9,7 +9,7 @@
 }
 
 @theme {
-  --color-bg: var(--color-taupe-100);
+  --color-background: var(--color-taupe-100);
   --color-content: var(--color-taupe-900);
   --color-link: var(--color-slate-500);
 
@@ -34,7 +34,7 @@
   }
 
   body {
-    @apply bg-bg text-content 
+    @apply bg-background text-content 
       font-unifont 
       outline-none 
       antialiased;

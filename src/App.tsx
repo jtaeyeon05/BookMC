@@ -1,16 +1,38 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 
 function App() {
-  const [isFaviconWritten, setIsFaviconWritten] = useState(false);
-  const [count, setCount] = useState(0);
+  const [value, setValue] = useState("");
 
-  const FaviconPath = isFaviconWritten
+  const isWritten = value !== "";
+  const FaviconPath = isWritten
     ? "/assets/favicons-written"
     : "/assets/favicons";
-  const FaviconIconPath = isFaviconWritten
-    ? "/favicon-written.ico"
-    : "/favicon.ico";
+  const FaviconIconPath = isWritten ? "/favicon-written.ico" : "/favicon.ico";
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const savedValue = params.get("v");
+
+    if (savedValue) {
+      setValue(savedValue);
+    }
+  }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+
+    if (value) {
+      params.set("v", encodeURIComponent(value));
+      window.history.replaceState(
+        {},
+        "",
+        `${window.location.pathname}?${params.toString()}`,
+      );
+    } else {
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, [value]);
 
   return (
     <HelmetProvider>
@@ -46,17 +68,23 @@ function App() {
         />
       </Helmet>
 
-      <div>
-        <div>Hello World!: {count}</div>
-        <button type="button" onClick={() => setCount((prev) => prev + 1)}>
-          Increase
-        </button>
+      <div className="flex flex-col items-start w-dvw h-dhv p-4 gap-2 text-lg overflow-hidden">
         <button
           type="button"
-          onClick={() => setIsFaviconWritten((prev) => !prev)}
+          className="px-2 py-1 bg-button-background text-button-content border-2 border-button-outline cursor-pointer"
+          onClick={() => navigator.clipboard.writeText(window.location.href)}
         >
-          Change the Favicon ({isFaviconWritten ? "W" : "D"})
+          복사
         </button>
+
+        <textarea
+          className="w-full min-h-16 p-2 bg-book-paper border-2 border-content"
+          translate="no"
+          value={value}
+          onChange={(event) => {
+            setValue(event.target.value);
+          }}
+        />
       </div>
     </HelmetProvider>
   );
