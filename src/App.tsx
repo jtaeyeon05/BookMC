@@ -15,7 +15,7 @@ function App() {
     const savedValue = params.get("v");
 
     if (savedValue) {
-      setValue(savedValue);
+      setValue(decodeURIComponent(savedValue));
     }
   }, []);
 
