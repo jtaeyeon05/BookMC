@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Unifont";
+  src: url("/assets/fonts/unifont-18.0.01.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --color-bg: var(--color-taupe-100);
+  --color-content: var(--color-taupe-900);
+  --color-link: var(--color-slate-500);
+
+  --color-book-paper: #fdf6e5;
+  --color-book-cover: #75321e;
+  --color-book-content: #000000;
+
+  --color-button-background: #6c6c6c;
+  --color-button-content: #e0e0e0;
+  --color-button-content-shadow: #383838;
+  --color-button-outline: #000000;
+  --color-button-outline-inner-1: #aaaaaa;
+  --color-button-outline-inner-2: #575757;
+
+  --font-unifont: "Unifont", monospace;
+}
+
+@layer base {
+  *:focus-visible {
+    @apply outline-none 
+      border-solid [border-image:linear-gradient(var(--color-content),_var(--color-content))_1_/_0.125rem_/_0.25rem];
+  }
+
+  body {
+    @apply bg-bg text-content 
+      font-unifont 
+      outline-none 
+      antialiased;
+  }
+}
